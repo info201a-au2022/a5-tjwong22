@@ -9,25 +9,23 @@
 
 library(shiny)
 
+introTab <- tabPanel(
+  "Introduction",
+  titlePanel("Introduction"),
+  mainPanel (
+    p("mini intro to intro"),
+    h1("value of interest 1"),
+    p(""),
+    h1("value of interest 2"),
+    p(""),
+    h1("value of interest 3"),
+    p(""),
+    p("outro to intro")
+  )
+)
+
 # Define UI for application that draws a histogram
-ui <- shinyUI(fluidPage(
-
-    # Application title
-    titlePanel("Old Faithful Geyser Data"),
-
-    # Sidebar with a slider input for number of bins
-    sidebarLayout(
-        sidebarPanel(
-            sliderInput("bins",
-                        "Number of bins:",
-                        min = 1,
-                        max = 50,
-                        value = 30)
-        ),
-
-        # Show a plot of the generated distribution
-        mainPanel(
-            plotOutput("distPlot")
-        )
-    )
+ui <- shinyUI(navbarPage(
+  introTab
+  # interactive_tab
 ))
