@@ -4,7 +4,6 @@ library(ggplot2)
 library(dplyr)
 library(tidyverse)
 library(plotly)
-library(markdown)
 library(rsconnect)
 
 #Sources

@@ -8,8 +8,14 @@
 #
 
 library(shiny)
+library(ggplot2)
+library(dplyr)
+library(tidyverse)
+library(plotly)
+library(rsconnect)
 source("server.R")
 
+# defines page layout for intro tab
 intro_tab <- tabPanel(
   "Introduction",
   titlePanel("Introduction"),
@@ -75,6 +81,7 @@ intro_tab <- tabPanel(
   )
 )
 
+# input for year of interest (slider)
 year_input <- sliderInput(
   inputId = "year",
   label = "Select a Year of Interest",
@@ -83,6 +90,7 @@ year_input <- sliderInput(
   sep = ""
 )
 
+# input for country of interst (checkbox)
 country_input <- checkboxGroupInput(
   inputId = "country",
   label = "Select a Country or Countries of Interest",
@@ -91,6 +99,7 @@ country_input <- checkboxGroupInput(
   inline = TRUE
 )
 
+# input for CO2 emission source (checkbox)
 co2source_input <- checkboxGroupInput(
   inputId = "co2source",
   label = "Select CO2 Sources of Interest",
@@ -104,6 +113,7 @@ co2source_input <- checkboxGroupInput(
                "other_co2_per_capita")
 )
 
+# defines interactive chart panel page layout
 interactive_tab <- tabPanel(
   "Interactive Chart",
   titlePanel("CO2 Emissions Chart"),
@@ -131,7 +141,7 @@ interactive_tab <- tabPanel(
   
 )
 
-# Define UI for application that draws a histogram
+# Define UI for 2 page application
 ui <- shinyUI(navbarPage(
   "A5",
   intro_tab,

@@ -10,6 +10,9 @@
 library(shiny)
 library(ggplot2)
 library(dplyr)
+library(tidyverse)
+library(plotly)
+library(rsconnect)
 
 co2_data_with_countries <- read.csv("data/owid-co2-data.csv")
 co2_data <- co2_data_with_countries %>%
@@ -25,10 +28,10 @@ add_Z <- function(x, y, given_year){
 }
 
 
-# Define server logic required to draw a histogram
+# Define server logic required to draw a bar plot
 server <- shinyServer(function(input, output) {
     output$interactive <- renderPlotly({
-      # filter
+      # filter to plottable dataset
       filtered_data <- co2_data %>%
         filter(year == input$year) %>%
         select(country, all_of(input$co2source)) %>%
@@ -45,6 +48,7 @@ server <- shinyServer(function(input, output) {
       Tons_per_Person <- plot_data$Z
       CO2_Emission_Type <- plot_data$Y
       
+      # plots the chart
       interactive_chart <- ggplot(plot_data,
                                   aes(fill=CO2_Emission_Type,
                                       x=Country,
@@ -52,8 +56,6 @@ server <- shinyServer(function(input, output) {
         geom_bar(position="stack", stat="identity") +
         ggtitle(paste("Country CO2 Emissions in", input$year, "by Emission Type")) +
         ylab("Tons per Person")
-      
-      
     })
 
 })
