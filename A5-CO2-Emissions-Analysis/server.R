@@ -8,21 +8,52 @@
 #
 
 library(shiny)
+library(ggplot2)
+library(dplyr)
+
+co2_data_with_countries <- read.csv("data/owid-co2-data.csv")
+co2_data <- co2_data_with_countries %>%
+  filter(iso_code != "")
+countries <- unique(co2_data$country)
+
+add_Z <- function(x, y, given_year){
+  result <- co2_data %>%
+    filter(country == x) %>%
+    filter(year == given_year) %>%
+    pull(y)
+  return(result)
+}
+
 
 # Define server logic required to draw a histogram
 server <- shinyServer(function(input, output) {
-
-    output$distPlot <- renderPlot({
-
-        # generate bins based on input$bins from ui.R
-        x    <- faithful[, 2]
-        bins <- seq(min(x), max(x), length.out = input$bins + 1)
-
-        # draw the histogram with the specified number of bins
-        hist(x, breaks = bins, col = 'darkgray', border = 'white',
-             xlab = 'Waiting time to next eruption (in mins)',
-             main = 'Histogram of waiting times')
-
+    output$interactive <- renderPlotly({
+      # filter
+      filtered_data <- co2_data %>%
+        filter(year == input$year) %>%
+        select(country, all_of(input$co2source)) %>%
+        filter(country %in% input$country)
+      
+      plot_x <- input$country
+      plot_y <- input$co2source
+      plot_data <- expand.grid(X=plot_x, Y=plot_y)
+      plot_data$Z <- mapply(add_Z, as.character(plot_data$X),
+                            as.character(plot_data$Y), input$year)
+      
+      # makes interactive more readable (when hovering over values)
+      Country <- plot_data$X
+      Tons_per_Person <- plot_data$Z
+      CO2_Emission_Type <- plot_data$Y
+      
+      interactive_chart <- ggplot(plot_data,
+                                  aes(fill=CO2_Emission_Type,
+                                      x=Country,
+                                      y=Tons_per_Person)) +
+        geom_bar(position="stack", stat="identity") +
+        ggtitle(paste("Country CO2 Emissions in", input$year, "by Emission Type")) +
+        ylab("Tons per Person")
+      
+      
     })
 
 })
